@@ -1,0 +1,50 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+    <h2>{{ title }}</h2>
+    {#<h3>{{ message }}</h3>#}
+
+    {% if form.errors %}
+        <p style="color:red;">Correct next errors: {{ form.errors }}</p>
+    {% endif %}
+
+    <form class="form-horizontal" action="" method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label for="id_name" class="col-md-2 control-label">Name</label>
+        <div class="col-md-10">
+            {{ form.name }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="id_description" class="col-md-2 control-label">Description</label>
+        <div class="col-md-10">
+            {{ form.description }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="id_date" class="col-md-2 control-label">Date</label>
+        <div class="col-md-10">
+            {{ form.date }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="id_completed" class="col-md-2 control-label">Completed</label>
+        <div class="col-md-10">
+            {{ form.completed }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <a href="{% url 'todolist' %}" class="col-md-offset-2 btn btn-primary">Cancle</a>
+        <button type="submit" class="btn btn-primary">Add</button>
+
+    </div>
+
+</form>
+{% endblock %}

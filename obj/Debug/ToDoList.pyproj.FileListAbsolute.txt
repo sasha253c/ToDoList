@@ -1,0 +1,15 @@
+B:\my_prog\python_3\django\ToDoList\bin\Microsoft.PythonTools.WebRole.dll
+B:\my_prog\python_3\django\ToDoList\obj\Debug\attach_server.py
+B:\my_prog\python_3\django\ToDoList\obj\Debug\visualstudio_py_debugger.py
+B:\my_prog\python_3\django\ToDoList\obj\Debug\visualstudio_py_repl.py
+B:\my_prog\python_3\django\ToDoList\obj\Debug\visualstudio_py_util.py
+B:\my_prog\python_3\django\ToDoList\obj\Debug\__init__.py
+B:\my_prog\python_3\django\ToDoList\obj\Debug\__main__.py
+B:\my_prog\python_3\django\ToDoList\bin\AzureSetup.cfg
+B:\my_prog\python_3\django\ToDoList\bin\Microsoft.PythonTools.AzureSetup.exe
+B:\my_prog\python_3\django\ToDoList\bin\Microsoft.PythonTools.AzureSetup.exe.config
+B:\my_prog\python_3\django\ToDoList\bin\wfastcgi.py
+B:\my_prog\python_3\django\ToDoList\obj\Debug\deployment-updated-pyvenv.cfg
+B:\my_prog\python_3\django\ToDoList\ptvs_virtualenv_proxy.py
+B:\my_prog\python_3\django\ToDoList\obj\Debug\web.config
+B:\my_prog\python_3\django\ToDoList\obj\Debug\web.debug.config
