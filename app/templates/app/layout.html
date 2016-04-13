@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/bootstrap-theme.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/site.css' %}" />
     <script src="{% static 'app/scripts/modernizr-2.6.2.js' %}"></script>
+
+
 </head>
 
 <body>
@@ -45,9 +47,11 @@
 
     <script src="{% static 'app/scripts/jquery-1.12.1.js' %}"></script>
     <script src="{% static 'app/scripts/jquery.tablesorter.js' %}"></script>
+
     <script src="{% static 'app/scripts/bootstrap.js' %}"></script>
     <script src="{% static 'app/scripts/respond.js' %}"></script>
-    {% block scripts %}{% endblock %}
+    {% block scripts %}
+    {% endblock %}
 
 </body>
 </html>
