@@ -9,4 +9,5 @@ class TaskAdmin(admin.ModelAdmin):
     ordering = ('date', 'name',)
 
 
+
 admin.site.register(Task, TaskAdmin)

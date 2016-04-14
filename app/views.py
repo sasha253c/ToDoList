@@ -3,8 +3,11 @@ Definition of views.
 """
 
 from django.shortcuts import render, render_to_response, redirect
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
+from django.views.decorators.csrf import csrf_protect
+from django.core import serializers
+
 
 from datetime import datetime
 
@@ -42,6 +45,23 @@ def addTask(request):
         form = AddTask()
     return render(request, 'app/addtask.html', {'form': form, 'title':'AddTask', 'year':datetime.now().year, 'massage': 'addtask',})
 
+
+def change_completed(request):
+    results = {'success':False}
+    if request.method == 'POST':
+        
+        id = request.POST.get('id', '')
+        try:
+            task = Task.objects.get(id=id)
+            task.completed = not task.completed
+            task.save()
+        except Task.DoesNotExist:
+            raise
+
+        #chenge db
+
+        results = {'success':True, 'name': Task.objects.get(id=id).name}
+    return JsonResponse(results)
 
 def home(request):
     """Renders the home page."""

@@ -38,7 +38,8 @@ class AddTask(forms.ModelForm):
         'class': 'form-control',
         'type':'date',
         'value': datetime.datetime.date(datetime.datetime.now()),
-        }))
+        })
+                           )
 
     #completed = forms.BooleanField(widget=forms.CheckboxInput({
     #    'class': 'form-control'

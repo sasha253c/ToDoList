@@ -5,8 +5,11 @@ Definition of urls for ToDoList.
 from datetime import datetime
 from django.conf.urls import url, patterns
 
+from django.views.generic.list import ListView
+
 import app.forms
 import app.views
+
 
 # Uncomment the next lines to enable the admin:
 from django.conf.urls import include
@@ -18,6 +21,8 @@ urlpatterns = [
     url(r'^$', app.views.home, name='home'),
     url(r'^todolist/$', app.views.todolist, name='todolist'),
     url(r'^todolist/addtask/$', app.views.addTask, name='addtask'),
+    url(r'^change-completed/$', app.views.change_completed),
+
 
     url(r'^contact$', app.views.contact, name='contact'),
     url(r'^about', app.views.about, name='about'),
