@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['sasha253c.pythonanywhere.com', ]
 INSTALLED_APPS = [
     'app',
     'tasks',
+    'django_bootstrap_calendar',
     # Add your apps here to enable them
     'django.contrib.admin',
     'django.contrib.auth',

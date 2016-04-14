@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^todolist/$', app.views.todolist, name='todolist'),
     url(r'^todolist/addtask/$', app.views.addTask, name='addtask'),
     url(r'^change-completed/$', app.views.change_completed),
-
+    url(r'^calendar/', include('django_bootstrap_calendar.urls')),
 
     url(r'^contact$', app.views.contact, name='contact'),
     url(r'^about', app.views.about, name='about'),

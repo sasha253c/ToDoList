@@ -89,6 +89,7 @@
     <Content Include="app\static\scripts\respond.min.js" />
     <None Include="app\static\scripts\_references.js" />
     <Content Include="app\templates\app\addtask.html" />
+    <Content Include="app\templates\app\calendar.html" />
     <Content Include="app\templates\app\thanks.html" />
     <Content Include="app\templates\app\todolist.html" />
     <Content Include="requirements.txt" />

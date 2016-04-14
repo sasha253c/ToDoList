@@ -1,0 +1,22 @@
+﻿{% extends "app/layout.html" %}
+
+{% load bootstrap_calendar %}
+
+{% block content %}
+
+<h2>{{ title }}.</h2>
+<h3>{{ message }}</h3>
+
+<p>Use this area to provide additional information.</p>
+
+{% bootstrap_controls 'optional-css-classes' %}
+{% bootstrap_calendar 'optional-css-classes' %}
+
+{% endblock %}
+
+{% block scripts %}
+
+{% bootstrap_calendar_js language="lang-code" %}
+{% bootstrap_calendar_init language="lang-code" %}
+
+{% endblock %}
