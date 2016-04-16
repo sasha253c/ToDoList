@@ -30,6 +30,7 @@ else:
 
 ALLOWED_HOSTS = ['sasha253c.pythonanywhere.com', ]
 
+STATIC_ROOT = '/home/sasha253c/ToDoList/app/static/'
 
 # Application definition
 
