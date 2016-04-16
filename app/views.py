@@ -8,8 +8,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.core import serializers
 
-
-from datetime import datetime
+from _datetime import datetime, date
 
 from tasks.models import Task
 
@@ -57,11 +56,70 @@ def change_completed(request):
             task.save()
         except Task.DoesNotExist:
             raise
-
-        #chenge db
-
         results = {'success':True, 'name': Task.objects.get(id=id).name}
     return JsonResponse(results)
+
+def getTasksForCalendar(request):
+    results = {'success':False}
+    
+    try:
+        year = int(request.GET.get('year', 2016))
+        month = int(request.GET.get('month', 1))
+    except Exception:
+        raise
+    
+    data = {}
+    strYear = str(year)
+    
+
+    if request.method == 'GET':
+        try:
+            for y in range(year, year+1):
+                year = y
+                strYear = str(year)
+                for m in range(1, 13):
+                    month = m
+                    strMonth = '0' + str(month) if month < 10 else str(month)
+                    for d in range(1, 32):
+                        if len(Task.objects.filter(date__year=year,
+                                                   date__month=month,
+                                                   date__day=d,
+                                                   completed=False)) > 0:
+                            strDay = '0' + str(d) if d < 10 else str(d)
+                            currentDate = strYear + '-' + strMonth + '-' + strDay
+                            data[currentDate] = {'number': len(Task.objects.filter(date__year=year,
+                                                                                   date__month=month,
+                                                                                   date__day=d,
+                                                                                   completed=False))}
+        except Task.DoesNotExist:
+            raise
+        else:
+            results['success'] = True
+            results['name'] = 'GetLenTasksForDay'
+        
+        results['data'] = data
+        if month==3:
+           assert False;
+    #results = {'success':True, 'name': 'GetLenTasksForDay', '2016-04-13': {'number': 5}}
+    return JsonResponse(results)
+
+
+def calendar(request):
+    """Renders the about page."""
+    assert isinstance(request, HttpRequest)
+    #assert False
+    results = {'title': 'Calendar',
+
+               'message':'Hello',
+               'year':datetime.now().year,
+              }
+    #assert False
+    return render(
+        request,
+        'app/calendar.html',
+        results
+    )
+
 
 def home(request):
     """Renders the home page."""

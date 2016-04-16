@@ -7,6 +7,8 @@ from django.conf.urls import url, patterns
 
 from django.views.generic.list import ListView
 
+#from django_bootstrap_calendar.views import CalendarJsonListView, CalendarView
+
 import app.forms
 import app.views
 
@@ -22,7 +24,8 @@ urlpatterns = [
     url(r'^todolist/$', app.views.todolist, name='todolist'),
     url(r'^todolist/addtask/$', app.views.addTask, name='addtask'),
     url(r'^change-completed/$', app.views.change_completed),
-    url(r'^calendar/', include('django_bootstrap_calendar.urls')),
+    url(r'^calendar/$', app.views.calendar, name='calendar'),
+    url(r'^get-tasks/$', app.views.getTasksForCalendar, ),
 
     url(r'^contact$', app.views.contact, name='contact'),
     url(r'^about', app.views.about, name='about'),
@@ -51,3 +54,4 @@ urlpatterns = [
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 ]
+

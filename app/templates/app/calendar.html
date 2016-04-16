@@ -1,22 +1,122 @@
 ﻿{% extends "app/layout.html" %}
 
-{% load bootstrap_calendar %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'app/content/responsive-calendar.css' %}" />
+<script src="{% static 'app/scripts/responsive-calendar.js' %}"></script>
 
-{% block content %}
 
-<h2>{{ title }}.</h2>
-<h3>{{ message }}</h3>
-
-<p>Use this area to provide additional information.</p>
-
-{% bootstrap_controls 'optional-css-classes' %}
-{% bootstrap_calendar 'optional-css-classes' %}
-
+{% block head %}
+<meta name="distributor" content="Global" />
+<meta itemprop="contentRating" content="General" />
+<meta name="robots" content="All" />
+<meta name="revisit-after" content="7 days" />
+<meta name="description" content="The source of truly unique and awesome jquery plugins." />
+<meta name="keywords" content="slider, carousel, responsive, swipe, one to one movement, touch devices, jquery, plugin, bootstrap compatible, html5, css3" />
+<meta name="author" content="w3widgets.com">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href='http://fonts.googleapis.com/css?family=Economica' rel='stylesheet' type='text/css'>
+<!-- Bootstrap -->
+<!-- Respomsive slider -->
 {% endblock %}
 
+{% block content %}
+<div id="#calendar" class="container">
+    <!-- Responsive calendar - START -->
+    <div class="responsive-calendar">
+        <div class="controls">
+            <a class="pull-left" data-go="prev"><div class="btn btn-primary">Prev</div></a>
+            <h4><span data-head-year></span> <span data-head-month></span></h4>
+            <a class="pull-right" data-go="next"><div class="btn btn-primary">Next</div></a>
+        </div><hr />
+        <div class="day-headers">
+            <div class="day header">Mon</div>
+            <div class="day header">Tue</div>
+            <div class="day header">Wed</div>
+            <div class="day header">Thu</div>
+            <div class="day header">Fri</div>
+            <div class="day header">Sat</div>
+            <div class="day header">Sun</div>
+        </div>
+        <div class="days" data-group="days">
+
+        </div>
+    </div>
+
+
+    <!-- Responsive calendar - END -->
+</div>
+
+
+
+{% endblock %}
 {% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var now = new Date();
+        var today = '' + now.getFullYear() + ' - ' + (now.getMonth() + 1);
+        var currentYear = now.getFullYear(),
+            currentMonth = now.getMonth() + 1;
 
-{% bootstrap_calendar_js language="lang-code" %}
-{% bootstrap_calendar_init language="lang-code" %}
 
+
+        $('#calendar').responsiveCalendar(today).addClass('today');
+
+        $.get("/get-tasks/", { "year": now.getFullYear(), "month": now.getMonth() + 1 }, function (data) {
+            var result = data.data;
+            var obj = {};
+
+            for (var i in result) {
+                obj[i] = { "number": result[i].number };   
+            }
+            $(".responsive-calendar").responsiveCalendar({
+                events: obj,
+            });
+        });
+
+        $('.pull-left').click(function () {
+
+            currentMonth = (currentMonth + 11) % 12;
+            if (currentMonth == 0) {
+                currentYear -= 1;
+                currentMonth = 12;
+            }
+            $.get("/get-tasks/", { "year": currentYear, "month": currentMonth }, function (data) {
+                var result = data.data;
+                var obj = {};
+
+                for (var i in result) {
+                    obj[i] = { "number": result[i].number };
+                }
+
+                $(".responsive-calendar").responsiveCalendar({
+                    events: obj,
+                });
+
+            });
+        });
+
+        $('.pull-right').click(function () {
+            
+            currentMonth = (currentMonth + 1);
+            if (currentMonth == 13) {
+                currentYear += 1;
+                currentMonth = 1;
+            }
+            $.get("/get-tasks/", { "year": currentYear, "month": currentMonth }, function (data) {
+                var result = data.data;
+                var obj = {};
+
+                for (var i in result) {
+                    obj[i] = { "number": result[i].number };
+                }
+
+                $(".responsive-calendar").responsiveCalendar({
+                    events: obj,
+                });
+
+            });
+        });
+
+    });
+</script>
 {% endblock %}
