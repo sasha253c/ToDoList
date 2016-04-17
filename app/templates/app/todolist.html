@@ -4,50 +4,75 @@
 
 
 
-<h2>{{ title }}</h2>
-{#<h3>{{ message }}</h3>#}
 
 
-<table id="tasks" class="table table-hover table-bordered table-striped">
-    <thead>
-        <tr>
-            <th style="width:156px;">Status</th>
-            <th>Name  <span class="glyphicon glyphicon-menu-right btn-sm" aria-hidden="true"></span></th>
-            <th>Description  <span class="glyphicon glyphicon-menu-right btn-sm" aria-hidden="true"></span></th>
-            <th>Date  <span class="glyphicon glyphicon-menu-right btn-sm" aria-hidden="true"></span></th>
-            <th>Change  </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for task in tasks %}
-        <tr data-completed="{{ task.completed }}">
-            <td><button id="{{ task.id }}" class="btn btn-primary btn-block" type="button">Do</button></td>
-            <td>{{ task.name }}</td>
-            <td>{{ task.description }}</td>
-            <td>{{ task.date|date:'SHORT_DATE_FORMAT' }}</td>
-            <td>
-                <div class="btn-group btn-group-xs" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default">Change</button>
-                    <button type="button" class="btn btn-default">Delete</button>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'addtask' %}" class="btn btn-primary">Add</a>
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+        <div class="container-fluid">
+            <div class="col-md-2">
+                <h4>Tasks</h4>
+            </div>
+            <div class="dropdown col-md-1 col-md-offset-9">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Interval
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="{% url 'todolist' interval='day' %}">Day</a></li>
+                    <li><a href="{% url 'todolist' interval='week' %}">Week</a></li>
+                    <li><a href="{% url 'todolist' interval='month' %}">Month</a></li>
+                    <li><a href="{% url 'todolist' interval='year' %}">Year</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="{% url 'todolist' interval='all' %}">All</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
 
+
+        <!-- Table -->
+        <table id="tasks" class="table table-hover table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th style="width:35px;">Status</th>
+                    <th>Name  <span class="glyphicon glyphicon-menu-right btn-sm" aria-hidden="true"></span></th>
+                    <th>Description  <span class="glyphicon glyphicon-menu-right btn-sm" aria-hidden="true"></span></th>
+                    <th>Date  <span class="glyphicon glyphicon-menu-right btn-sm" aria-hidden="true"></span></th>
+                    <th>Change  </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr data-completed="{{ task.completed }}" data-name="{{ task.name }}" data-id="{{ task.id }}">
+                    <td><button class="btn btn-primary btn-block" type="button"><span class="glyphicon glyphicon-minus"></span></button></td>
+                    <td>{{ task.name }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>{{ task.date|date:'SHORT_DATE_FORMAT' }}</td>
+                    <td>
+                        <div class="btn-group btn-group-xs" role="group">
+                            <button type="button" class="btn btn-default changeTask" disabled="disabled">Change</button>
+                            <button type="button" class="btn btn-default deleteTask">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-footer">
+        <a href="{% url 'addtask' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add</a>
+    </div>
+</div>
 
 {% endblock %}
 
 {% block scripts %}
 
 <script>
-
     $(document).ready(function () {
-
         $.ajaxSetup({
-
             beforeSend: function (xhr, settings) {
                 function getCookie(name) {
                     var cookieValue = null;
@@ -76,12 +101,12 @@
             else notSuccess($(this));
         });
 
-            
-        
+
+
         var colDateNum = 2;
         $("#tasks").tablesorter(
             {
-                headers: { colDateNum : { sorter: 'shortDate' } }
+                headers: { colDateNum: { sorter: 'shortDate' } }
             }
         );
 
@@ -101,43 +126,59 @@
             }
         });
 
-        $('#tasks tbody tr td button').click(function () {
-            var id = $(this).attr('id');
-            var button = $(this);
+        $('#tasks tbody tr td > button').click(function () {
+            var task = $(this).parent().parent();
             //alert(id);
-            $.post('/change-completed/', { id: id }, function (data) {
+            $.post('/change-completed/', { id: task.attr('data-id') }, function (response) {
                 //alert(data.name);
-                //alert(button.val());
 
-                if (button.parent().parent().data('completed') === 'False') {
-                    button.parent().parent().data('completed', 'True');
-                    success(button.parent().parent());
+                if (task.data('completed') === 'False') {
+                    task.data('completed', 'True');
+                    success(task);
                 }
                 else {
-                    button.parent().parent().data('completed', 'False');
-                    notSuccess(button.parent().parent());
+                    task.data('completed', 'False');
+                    notSuccess(task);
                 }
                 //alert('end');
             });
+        });
+
+
+        $('.deleteTask').click(function () {
+            var message = 'Are You sure ?';
+            if (confirm(message)) {
+                var name = $(this).parents('tr').attr('data-name'),
+                    id = $(this).parents('tr').attr('data-id');
+                //post
+                $.post('/deleteTask/', { id: id }, function (data) {
+                    if (data.success) {
+                        alert('Deleted');
+                        $(this).parents('tr').remove();
+                    }
+                    else alert('Error');
+                });
+            }
         });
 
         function success(e) {
             e.addClass('success');
 
             var button = e.find('button').first();
-            button.html('Done');
             button.removeClass('btn-primary');
             button.addClass('btn-success');
-            
+            button.children().removeClass('glyphicon glyphicon-minus');
+            button.children().addClass('glyphicon glyphicon-ok');
         }
 
         function notSuccess(e) {
             e.removeClass('success');
 
             var button = e.find('button').first();
-            button.html('Do');
             button.removeClass('btn-success');
             button.addClass('btn-primary');
+            button.children().removeClass('glyphicon glyphicon-ok');
+            button.children().addClass('glyphicon glyphicon-minus');
         }
     });
 

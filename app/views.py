@@ -8,15 +8,31 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.core import serializers
 
-from _datetime import datetime, date
+from _datetime import datetime, date, timedelta
 
 from tasks.models import Task
 
 from app.forms import AddTask
 
-
-def todolist(request):
+def todolist(request, interval='all'):
     assert isinstance(request, HttpRequest)
+
+    now = date.today()
+    if interval == 'day':
+        tasks = Task.objects.filter(date__day=now.day)
+    elif interval == 'week':
+        nextWeek = now + timedelta(days=7)
+        currentDay = str(now.year) + '-' + str(now.month) + '-' + str(now.day)
+        nextDay = str(nextWeek.year) + '-' + str(nextWeek.month) + '-' + str(nextWeek.day)
+        tasks = Task.objects.filter(date__range=[currentDay, nextDay])
+    elif interval == 'month':
+        tasks = Task.objects.filter(date__year=now.year,
+                                    date__month=now.month)
+    elif interval == 'year':
+        tasks = Task.objects.filter(date__year=now.year)
+    else:
+        tasks = Task.objects.all()
+
     return render(
         request,
         'app/todolist.html',
@@ -24,7 +40,7 @@ def todolist(request):
             'title': 'ToDoList',
             'year':datetime.now().year,
             'message': "Hello",
-            'tasks': Task.objects.all(),
+            'tasks': tasks,
 
         }
     )
@@ -59,47 +75,44 @@ def change_completed(request):
         results = {'success':True, 'name': Task.objects.get(id=id).name}
     return JsonResponse(results)
 
+def deleteTask(request):
+    result = {'success':False}
+    if request.method == 'POST':
+        try:
+            id = request.POST.get('id', '')
+            Task.objects.get(id=id).delete()
+        except Exception:
+            raise
+        else:
+            result = {'success':True}
+    return JsonResponse(result)
+
+
+
+
+
 def getTasksForCalendar(request):
     results = {'success':False}
-    
-    try:
-        year = int(request.GET.get('year', 2016))
-        month = int(request.GET.get('month', 1))
-    except Exception:
-        raise
-    
-    data = {}
-    strYear = str(year)
-    
+
+    taskForDay = {}
 
     if request.method == 'GET':
         try:
-            for y in range(year, year+1):
-                year = y
-                strYear = str(year)
-                for m in range(1, 13):
-                    month = m
-                    strMonth = '0' + str(month) if month < 10 else str(month)
-                    for d in range(1, 32):
-                        if len(Task.objects.filter(date__year=year,
-                                                   date__month=month,
-                                                   date__day=d,
-                                                   completed=False)) > 0:
-                            strDay = '0' + str(d) if d < 10 else str(d)
-                            currentDate = strYear + '-' + strMonth + '-' + strDay
-                            data[currentDate] = {'number': len(Task.objects.filter(date__year=year,
-                                                                                   date__month=month,
-                                                                                   date__day=d,
-                                                                                   completed=False))}
+            for task in Task.objects.filter(completed=False):
+                date = str(task.date)
+                if date in taskForDay:
+                    taskForDay[date]['number'] += 1
+                else:
+                    taskForDay[date] = {'number': 1}
+
         except Task.DoesNotExist:
             raise
         else:
             results['success'] = True
             results['name'] = 'GetLenTasksForDay'
         
-        results['data'] = data
-        if month==3:
-           assert False;
+        results['tasks'] = taskForDay
+        #assert False;
     #results = {'success':True, 'name': 'GetLenTasksForDay', '2016-04-13': {'number': 5}}
     return JsonResponse(results)
 

@@ -21,11 +21,12 @@ admin.autodiscover()
 urlpatterns = [
     # Examples:
     url(r'^$', app.views.home, name='home'),
-    url(r'^todolist/$', app.views.todolist, name='todolist'),
-    url(r'^todolist/addtask/$', app.views.addTask, name='addtask'),
+    url(r'^todolist/(?P<interval>\w+)/$', app.views.todolist, name='todolist'),
+    url(r'^addtask/$', app.views.addTask, name='addtask'),
     url(r'^change-completed/$', app.views.change_completed),
     url(r'^calendar/$', app.views.calendar, name='calendar'),
     url(r'^get-tasks/$', app.views.getTasksForCalendar, ),
+    url(r'^deleteTask/$', app.views.deleteTask),
 
     url(r'^contact$', app.views.contact, name='contact'),
     url(r'^about', app.views.about, name='about'),

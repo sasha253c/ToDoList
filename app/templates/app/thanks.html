@@ -5,6 +5,5 @@
 <h2>{{ title }}.</h2>
 <h3>{{ message }}</h3>
 
-<p>Thanks</p>
-<a href="{% url 'todolist' %}" class="btn btn-primary">Back</a>
+<a href="{% url 'todolist' interval='all' %}" class="btn btn-primary">Back</a>
 {% endblock %}
