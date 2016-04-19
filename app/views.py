@@ -8,6 +8,8 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.core import serializers
 
+from django.db.models import Q
+
 from _datetime import datetime, date, timedelta
 
 from tasks.models import Task
@@ -15,23 +17,48 @@ from tasks.models import Task
 from app.forms import AddTask
 
 def todolist(request, interval='all'):
+
     assert isinstance(request, HttpRequest)
 
+    if request.method == 'GET' and 'search' in request.GET:
+        search = request.GET['search']
+        if not search:
+           tasks = {}
+        else:
+           tasks = Task.objects.filter(Q(name__icontains=search) |
+                                       Q(description__icontains=search) |
+                                       Q(date__icontains=search))
+        return render(request,
+                      'app/todolist.html',
+                      {
+                          'title': 'ToDoList',
+                          'year':datetime.now().year,
+                          'message': "Hello",
+                          'tasks': tasks,
+                      })
+
     now = date.today()
-    if interval == 'day':
-        tasks = Task.objects.filter(date__day=now.day)
+    step = request.GET.get('step', timedelta(days=1))
+    tasks = False
+
+    if interval == 'today':
+        gap = now
+    elif interval == 'tomorrow':
+        now += timedelta(days=1)
+        gap = now
     elif interval == 'week':
-        nextWeek = now + timedelta(days=7)
-        currentDay = str(now.year) + '-' + str(now.month) + '-' + str(now.day)
-        nextDay = str(nextWeek.year) + '-' + str(nextWeek.month) + '-' + str(nextWeek.day)
-        tasks = Task.objects.filter(date__range=[currentDay, nextDay])
+        gap = now + timedelta(days=7)
     elif interval == 'month':
-        tasks = Task.objects.filter(date__year=now.year,
-                                    date__month=now.month)
+        gap = now + timedelta(days=31)
     elif interval == 'year':
-        tasks = Task.objects.filter(date__year=now.year)
+        gap = now + timedelta(days=365)
     else:
         tasks = Task.objects.all()
+
+    if not tasks:
+        currentDay = str(now.year) + '-' + str(now.month) + '-' + str(now.day)
+        nextDay = str(gap.year) + '-' + str(gap.month) + '-' + str(gap.day)
+        tasks = Task.objects.filter(date__range=[currentDay, nextDay])
 
     return render(
         request,
@@ -44,6 +71,8 @@ def todolist(request, interval='all'):
 
         }
     )
+
+
 
 def addTask(request):
     if request.method == 'POST':
@@ -75,6 +104,7 @@ def change_completed(request):
         results = {'success':True, 'name': Task.objects.get(id=id).name}
     return JsonResponse(results)
 
+
 def deleteTask(request):
     result = {'success':False}
     if request.method == 'POST':
@@ -102,8 +132,9 @@ def getTasksForCalendar(request):
                 date = str(task.date)
                 if date in taskForDay:
                     taskForDay[date]['number'] += 1
+                    taskForDay[date]['name'] += str(task.name) + '; '
                 else:
-                    taskForDay[date] = {'number': 1}
+                    taskForDay[date] = {'number': 1, 'name': str(task.name)+'; '}
 
         except Task.DoesNotExist:
             raise

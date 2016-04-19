@@ -53,7 +53,9 @@
 <script type="text/javascript">
     $(document).ready(function () {
         var now = new Date();
-        var today = '' + now.getFullYear() + ' - ' + (now.getMonth() + 1);
+        var today = '' + now.getFullYear() + '-' + (now.getMonth() + 1);
+        var year = now.getFullYear(),
+            month = now.getMonth() + 1;
 
         $('#calendar').responsiveCalendar(today).addClass('today');
 
@@ -61,17 +63,44 @@
             onDayClick: function (events) { alert('Day was clicked') }
         });
 
+        $('.pull-left').click(function () {
+            if (month == 1) {
+                month = 12
+                year -= 1
+            }
+            else month -= 1
+        });
+
+        $('.pull-right').click(function () {
+            if (month == 12) {
+                month = 1
+                year += 1
+            }
+            else month += 1
+        });
+
+
+
         $.get("/get-tasks/", function (data) {
             var result = data.tasks;
+   
             var obj = {};
 
             for (var i in result) {
-                obj[i] = { "number": result[i].number };
+                obj[i] = { "number": result[i].number, "name": result[i].name };
             }
             $(".responsive-calendar").responsiveCalendar({
                 events: obj,
+                onActiveDayClick: function (events) {
+                    var strMonth = month > 9 ? '' + month : '0' + month;
+                    var day = $(this).text() > 9 ? '' + $(this).text() : '0' + $(this).text();
+
+                    alert(obj[('' + year + '-' + strMonth + '-' + day)].name);
+                }
+                   
             });
         });
+
     });
 </script>
 {% endblock %}
