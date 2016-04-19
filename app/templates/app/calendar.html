@@ -4,7 +4,6 @@
 <link rel="stylesheet" type="text/css" href="{% static 'app/content/responsive-calendar.css' %}" />
 <script src="{% static 'app/scripts/responsive-calendar.js' %}"></script>
 
-
 {% block head %}
 <meta name="distributor" content="Global" />
 <meta itemprop="contentRating" content="General" />
@@ -41,14 +40,10 @@
 
         </div>
     </div>
-
-
     <!-- Responsive calendar - END -->
 </div>
-
-
-
 {% endblock %}
+
 {% block scripts %}
 <script type="text/javascript">
     $(document).ready(function () {
@@ -58,10 +53,6 @@
             month = now.getMonth() + 1;
 
         $('#calendar').responsiveCalendar(today).addClass('today');
-
-        $('#calendar').responsiveCalendar({
-            onDayClick: function (events) { alert('Day was clicked') }
-        });
 
         $('.pull-left').click(function () {
             if (month == 1) {
@@ -79,11 +70,9 @@
             else month += 1
         });
 
-
-
         $.get("/get-tasks/", function (data) {
             var result = data.tasks;
-   
+
             var obj = {};
 
             for (var i in result) {
@@ -94,13 +83,10 @@
                 onActiveDayClick: function (events) {
                     var strMonth = month > 9 ? '' + month : '0' + month;
                     var day = $(this).text() > 9 ? '' + $(this).text() : '0' + $(this).text();
-
-                    alert(obj[('' + year + '-' + strMonth + '-' + day)].name);
+                    alert('Name:\n' + obj[('' + year + '-' + strMonth + '-' + day)].name);
                 }
-                   
             });
         });
-
     });
 </script>
 {% endblock %}

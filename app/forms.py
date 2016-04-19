@@ -49,11 +49,5 @@ class AddTask(forms.ModelForm):
         model = Task
         fields = '__all__'
 
-
-
-
-#class AddTask(forms.Form):
-#    name = forms.CharField(max_length=30)
-#    description = forms.CharField(max_length=300)
-#    date = forms.CharField(max_length=30)
-#    completed = forms.CharField(max_length=10)
+class ChangeTask(AddTask):
+    pass

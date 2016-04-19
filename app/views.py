@@ -14,7 +14,7 @@ from _datetime import datetime, date, timedelta
 
 from tasks.models import Task
 
-from app.forms import AddTask
+from app.forms import AddTask, ChangeTask
 
 def todolist(request, interval='all'):
 
@@ -40,7 +40,7 @@ def todolist(request, interval='all'):
     now = date.today()
     step = request.GET.get('step', timedelta(days=1))
     tasks = False
-
+    gap = now
     if interval == 'today':
         gap = now
     elif interval == 'tomorrow':
@@ -89,7 +89,6 @@ def addTask(request):
         form = AddTask()
     return render(request, 'app/addtask.html', {'form': form, 'title':'AddTask', 'year':datetime.now().year, 'massage': 'addtask',})
 
-
 def change_completed(request):
     results = {'success':False}
     if request.method == 'POST':
@@ -132,9 +131,9 @@ def getTasksForCalendar(request):
                 date = str(task.date)
                 if date in taskForDay:
                     taskForDay[date]['number'] += 1
-                    taskForDay[date]['name'] += str(task.name) + '; '
+                    taskForDay[date]['name'] += str(task.name) + '\n'
                 else:
-                    taskForDay[date] = {'number': 1, 'name': str(task.name)+'; '}
+                    taskForDay[date] = {'number': 1, 'name': str(task.name)+'\n'}
 
         except Task.DoesNotExist:
             raise
@@ -151,13 +150,12 @@ def getTasksForCalendar(request):
 def calendar(request):
     """Renders the about page."""
     assert isinstance(request, HttpRequest)
-    #assert False
     results = {'title': 'Calendar',
 
                'message':'Hello',
                'year':datetime.now().year,
+               'tasks': Task.objects.all(),
               }
-    #assert False
     return render(
         request,
         'app/calendar.html',
@@ -185,7 +183,7 @@ def contact(request):
         'app/contact.html',
         {
             'title':'Contact',
-            'message':'Your contact page.',
+            'message':'My contact page.',
             'year':datetime.now().year,
         }
     )
@@ -198,7 +196,7 @@ def about(request):
         'app/about.html',
         {
             'title':'About',
-            'message':'Your application description page.',
+            'message':'My simple ToDoList',
             'year':datetime.now().year,
         }
     )

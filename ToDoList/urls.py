@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^todolist/(?P<interval>\w+)/$', app.views.todolist, name='todolist'),
 
     url(r'^addtask/$', app.views.addTask, name='addtask'),
+
     url(r'^change-completed/$', app.views.change_completed),
     url(r'^calendar/$', app.views.calendar, name='calendar'),
     url(r'^get-tasks/$', app.views.getTasksForCalendar, ),

@@ -60,7 +60,7 @@
                     <th>Name  <span class="glyphicon glyphicon-menu-right btn-sm" aria-hidden="true"></span></th>
                     <th>Description  <span class="glyphicon glyphicon-menu-right btn-sm" aria-hidden="true"></span></th>
                     <th>Date  <span class="glyphicon glyphicon-menu-right btn-sm" aria-hidden="true"></span></th>
-                    <th>Change  </th>
+                    <th>Delete  </th>
                 </tr>
             </thead>
             <tbody>
@@ -72,7 +72,7 @@
                     <td>{{ task.date|date:'SHORT_DATE_FORMAT' }}</td>
                     <td>
                         <div class="btn-group btn-group-xs" role="group">
-                            <button type="button" class="btn btn-default changeTask" disabled="disabled">Change</button>
+                            <button style="display:none" type="button" class="btn btn-default changeTask">Change</button>
                             <button type="button" class="btn btn-default deleteTask">Delete</button>
                         </div>
                     </td>
@@ -181,6 +181,13 @@
             });
         });
 
+        //$('.changeTask').click(function () {
+        //    alert('ChangeTask');
+        //    var x = location.pathname;
+        //    alert(x);
+        //    location.pathname = '/changetask/' + $(this).parents('tr').attr('data-id');
+
+        //});
 
         $('.deleteTask').click(function () {
             var message = 'Are You sure?';
